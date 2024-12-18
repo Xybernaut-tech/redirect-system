@@ -1,32 +1,27 @@
-// 🔥 STEP 1: Set the main domain URL (you only change this once)
-const mainDomain = 'https://neeplay.net';
+// Set the main domain URL (update this to the domain you want to redirect to)
+const mainDomain = 'https://newdomain.com';
 
-// 🔥 STEP 2: List of paths and their redirect destinations
+// Redirect paths and their destinations
 const redirects = {
-  '/channel1': '/live/z-tv-hd',
+  '/channel1': '/path/to/channel1',
   '/channel2': '/path/to/channel2',
   '/channel3': '/path/to/channel3',
   '/sports': '/category/sports'
 };
 
-// 🔥 Vercel serverless function
+// Serverless function for handling redirects
 export default function handler(req, res) {
-  console.log('Requested URL:', req.url); // Log the incoming URL
+  let requestedPath = req.url.split('?')[0]; // Strip query parameters
+  requestedPath = requestedPath.endsWith('/') ? requestedPath.slice(0, -1) : requestedPath; // Remove trailing slash
 
-  let requestedPath = req.url.split('?')[0];
-  requestedPath = requestedPath.endsWith('/') ? requestedPath.slice(0, -1) : requestedPath;
-
-  console.log('Processed Path:', requestedPath); // Log the processed path
-
+  // Check if the requested path matches any redirect
   if (redirects[requestedPath]) {
     const newUrl = mainDomain + redirects[requestedPath];
-    console.log('Redirecting to:', newurl); // Log the new redirect URL
-    res.writeHead(302, { Location: newUrl });
+    res.writeHead(302, { Location: newUrl }); // Temporary redirect (HTTP 302)
     res.end();
   } else {
-    console.log('404 Not Found for Path:', requestedPath); // Log the 404
+    // Handle unmatched paths
     res.statusCode = 404;
-    res.end('The page you are looking for does not exist.');
+    res.end('404 - Not Found');
   }
 }
-
