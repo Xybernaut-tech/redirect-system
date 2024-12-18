@@ -11,14 +11,20 @@ const redirects = {
 
 // 🔥 Vercel serverless function
 export default function handler(req, res) {
-  let requestedPath = req.url.split('?')[0]; // Remove query parameters
-  requestedPath = requestedPath.endsWith('/') ? requestedPath.slice(0, -1) : requestedPath; // Remove trailing slash
+  console.log('Requested URL:', req.url); // Log the incoming URL
+
+  let requestedPath = req.url.split('?')[0];
+  requestedPath = requestedPath.endsWith('/') ? requestedPath.slice(0, -1) : requestedPath;
+
+  console.log('Processed Path:', requestedPath); // Log the processed path
 
   if (redirects[requestedPath]) {
     const newUrl = mainDomain + redirects[requestedPath];
-    res.writeHead(302, { Location: newUrl }); // 302 = temporary redirect
+    console.log('Redirecting to:', newurl); // Log the new redirect URL
+    res.writeHead(302, { Location: newUrl });
     res.end();
   } else {
+    console.log('404 Not Found for Path:', requestedPath); // Log the 404
     res.statusCode = 404;
     res.end('The page you are looking for does not exist.');
   }
