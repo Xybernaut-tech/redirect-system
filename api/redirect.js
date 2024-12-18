@@ -10,13 +10,14 @@ const redirects = {
 
 // 🔥 Vercel serverless function
 export default function handler(req, res) {
-  // Get the path requested (like /channel1)
-  const requestedPath = req.url;
-
-  // Check if the path is in the redirects list
+  let requestedPath = req.url.split('?')[0]; // Remove query parameters
+  requestedPath = requestedPath.endsWith('/') ? requestedPath.slice(0, -1) : requestedPath; // Remove trailing slash
+  
+  console.log('Requested Path:', requestedPath); // Optional for debugging
+  
   if (redirects[requestedPath]) {
-    // Generate the new URL for the redirect
     const newUrl = mainDomain + redirects[requestedPath];
+    console.log('Redirecting to:', newUrl); // Optional for debugging
     res.writeHead(302, { Location: newUrl }); // 302 = temporary redirect
     res.end();
   } else {
